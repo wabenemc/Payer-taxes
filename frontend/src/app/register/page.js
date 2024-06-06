@@ -2,67 +2,71 @@
 import React, { useState, useEffect } from "react";
 import "./page.css";
 
-export default function InscriptionForm(props) {
+export default function FormulaireInscription(props) {
   const [nom, setNom] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [adresse, setadresse] = useState("");
+  const [prénom, setPrenom] = useState("");
+  const [adresse, setAdresse] = useState("");
   const [email, setEmail] = useState("");
-  const [motDePasse, setMotDePasse] = useState("");
-  const [confirmationMotDePasse, setConfirmationMotDePasse] = useState("");
-  const [numéroDetéléphone, setNuméroDeTéléphone] = useState("");
+  const [password, setMotDePasse] = useState("");
+  const [numero_de_téléphone, setNumero_de_téléphone] = useState("");
   const [message, setMessage] = useState("");
 
-  async function CollApi() {
+  async function appelerApi() {
+    let roles = ["ROLE_USER"];
     try {
+      const bodyData = {
+        roles,
+        email,
+        password,
+        prénom,
+        nom,
+        numero_de_téléphone,
+        adresse,
+      };
+
+      console.log("Request body :", bodyData);
+
       const response = await fetch("http://127.0.0.1:8000/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/ld+json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(bodyData),
       });
 
-      const data = await response.json();
-
-      // router.push("/profil");
-    } catch (error) {
-      ("");
+      console.log("Response status :", response.status);
+    } finally {
+      // router.push("/signin");
     }
   }
 
   useEffect(() => {
-    if (nom || prenom || email || motDePasse || confirmationMotDePasse) {
+    if (nom || prénom || email || prénom || adresse || numero_de_téléphone) {
       setMessage("");
     }
-  }, [nom, prenom, email, motDePasse, confirmationMotDePasse]);
+  }, [nom, prénom, email, password, adresse, numero_de_téléphone]);
 
-  const handleSubmit = (e) => {
+  const gérerSoumission = (e) => {
     e.preventDefault();
 
     if (
       !nom ||
-      !prenom ||
+      !prénom ||
       !email ||
-      !motDePasse ||
-      !confirmationMotDePasse ||
+      !password ||
       !adresse ||
-      !numéroDetéléphone
+      !numero_de_téléphone
     ) {
       setMessage("Veuillez remplir tous les champs obligatoires.");
       return;
     }
 
-    if (motDePasse !== confirmationMotDePasse) {
-      setMessage("Les mots de passe ne correspondent pas.");
-      return;
-    }
-    CollApi();
-
+    appelerApi();
     setMessage("Votre inscription a été envoyée avec succès !");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={gérerSoumission}>
       <label htmlFor="nom">Nom</label>
       <input
         type="text"
@@ -75,16 +79,16 @@ export default function InscriptionForm(props) {
       <input
         type="text"
         id="prenom"
-        value={prenom}
+        value={prénom}
         onChange={(e) => setPrenom(e.target.value)}
       />
 
-      <label htmlFor="adresse">adresse</label>
+      <label htmlFor="adresse">Adresse</label>
       <input
         type="text"
         id="adresse"
         value={adresse}
-        onChange={(e) => setadresse(e.target.value)}
+        onChange={(e) => setAdresse(e.target.value)}
       />
 
       <label htmlFor="email">Adresse e-mail</label>
@@ -95,29 +99,20 @@ export default function InscriptionForm(props) {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <label htmlFor="numéroDetéléphone">Numéro de téléphone</label>
+      <label htmlFor="numéroDeTéléphone">Numéro de téléphone</label>
       <input
-        type="number"
-        id="numéroDetéléphone"
-        onChange={(e) => setNuméroDeTéléphone(e.target.value)}
+        type="text"
+        id="numéroDeTéléphone"
+        value={numero_de_téléphone}
+        onChange={(e) => setNumero_de_téléphone(e.target.value)}
       />
 
       <label htmlFor="motDePasse">Mot de passe</label>
       <input
         type="password"
         id="motDePasse"
-        value={motDePasse}
+        value={password}
         onChange={(e) => setMotDePasse(e.target.value)}
-      />
-
-      <label htmlFor="confirmationMotDePasse">
-        Confirmation du mot de passe
-      </label>
-      <input
-        type="password"
-        id="confirmationMotDePasse"
-        value={confirmationMotDePasse}
-        onChange={(e) => setConfirmationMotDePasse(e.target.value)}
       />
 
       {message && <p>{message}</p>}

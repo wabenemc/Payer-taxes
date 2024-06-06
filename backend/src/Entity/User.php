@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+// #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -45,12 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $adresse = null;
 
     #[ORM\Column]
-    private ?int $numero_de_téléphone = null;
+    private ?string $numero_de_téléphone = null;
 
     /**
-     * @var Collection<int, paiement>
+     * @var Collection<int, Paiement>
      */
-    #[ORM\OneToMany(targetEntity: paiement::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Paiement::class, mappedBy: 'user')]
     private Collection $paiement;
 
     public function __construct()
@@ -181,14 +181,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, paiement>
+     * @return Collection<int, Paiement>
      */
     public function getPaiement(): Collection
     {
         return $this->paiement;
     }
 
-    public function addPaiement(paiement $paiement): static
+    public function addPaiement(Paiement $paiement): static
     {
         if (!$this->paiement->contains($paiement)) {
             $this->paiement->add($paiement);
@@ -198,7 +198,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removePaiement(paiement $paiement): static
+    public function removePaiement(Paiement $paiement): static
     {
         if ($this->paiement->removeElement($paiement)) {
             // set the owning side to null (unless already changed)
